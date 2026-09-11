@@ -1,11 +1,14 @@
 package com.vibecoding.shop.domain.order.entity;
 
-import com.vibecoding.shop.common.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +17,25 @@ import java.util.List;
  * - AbstractAggregateRoot: 도메인 이벤트 자동 발행
  * - 비즈니스 메서드: pay(), cancel(), ship(), deliver()
  * - 외부 참조: memberId (ID 참조 패턴)
+ * - 자바는 다중 클래스 상속이 안 되어 BaseEntity를 상속받을 수 없으므로
+ *   (AbstractAggregateRoot를 이미 상속) createdAt/updatedAt 감사 필드를 직접 정의함.
  */
 @Entity
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Order extends AbstractAggregateRoot<Order> {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 
     @Column(name = "member_id", nullable = false)
     private Long memberId;  // Member Aggregate는 ID로만 참조

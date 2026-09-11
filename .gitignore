@@ -1,0 +1,11 @@
+.gradle/
+build/
+.idea/
+*.iml
+.env
+.env.local
+*.jar
+src/main/generated/
+logs/
+*.log
+nginx/ssl/
